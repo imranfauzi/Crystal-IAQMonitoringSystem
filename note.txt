@@ -1,0 +1,5 @@
+authcontroller akan diguna untuk signup, signout, signin
+
+
+authbinding pula akan diguna untuk inititalize stream of the Get, initialize it in all time
+ia akan put AuthController in RAM so that everytime we nak guna it, ia dah ada. Set initial binding di howe
