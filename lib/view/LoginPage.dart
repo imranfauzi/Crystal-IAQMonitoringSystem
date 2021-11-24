@@ -1,20 +1,17 @@
-import 'package:crystal/authentication_service.dart';
 import 'package:crystal/controller/authController.dart';
-import 'package:crystal/view/Homepage.dart';
 import 'package:crystal/view/RegisterPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends GetWidget<AuthController> {
-
   String _email;
   String _password;
-
-
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final isHidden = true.obs;
 
+  void _togglePasswordView(){
+    isHidden.value = !isHidden.value;
+  }
   Widget _emailField() {
     return TextFormField(
       validator: (String value) {
@@ -22,7 +19,11 @@ class LoginPage extends GetWidget<AuthController> {
           return "Email is required";
         }
         if (!RegExp(
-                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+"
+                r"(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+                r"(?:[a-z0-9]"
+                r"(?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]"
+                r"(?:[a-z0-9-]*[a-z0-9])?")
             .hasMatch(value)) {
           return "Please enter a valid email address";
         }
@@ -38,9 +39,8 @@ class LoginPage extends GetWidget<AuthController> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32))),
     );
   }
-
   Widget _passwordField() {
-    return TextFormField(
+    return Obx(() => TextFormField(
       validator: (String value) {
         if (value.isEmpty) {
           return "Password is required";
@@ -50,19 +50,23 @@ class LoginPage extends GetWidget<AuthController> {
       onSaved: (String value) {
         _password = value;
       },
-      obscureText: false,
+      obscureText: isHidden.value,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
+          suffixStyle: TextStyle(color: Colors.orange),
+          suffix: InkWell(
+            onTap: _togglePasswordView,
+            child: Icon(isHidden.value ? Icons.visibility_off : Icons.visibility, size: 16,),
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32))),
-    );
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -77,13 +81,9 @@ class LoginPage extends GetWidget<AuthController> {
                   children: [
                     Image(image: AssetImage('assets/images/logo_white.gif')),
                     _emailField(),
-                    SizedBox(
-                      height: h / 30,
-                    ),
+                    SizedBox(height: h / 30,),
                     _passwordField(),
-                    SizedBox(
-                      height: h / 30,
-                    ),
+                    SizedBox(height: h / 30,),
                     Material(
                       borderRadius: BorderRadius.circular(30),
                       color: Colors.orangeAccent,
@@ -95,21 +95,12 @@ class LoginPage extends GetWidget<AuthController> {
                             return
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Invalid email or password")),
-                              );
-                          }
-                          _formKey.currentState.save();
+                              );}_formKey.currentState.save();
                           controller.SignIn(email: _email, password: _password);
-
-                          print("SignIn pressed" + _email + _password);
-
                         },
-                        child: Text(
-                          "Login",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
+                        child: Text("Login", textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white,
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ),
                     ),
@@ -124,14 +115,7 @@ class LoginPage extends GetWidget<AuthController> {
                             child: GestureDetector(
                                 child: Text('New User? Create Account'),
                                 onTap: () {
-
                                   Get.to(RegisterPage());
-                                  // Navigator.pushReplacement<void, void>(
-                                  //   context,
-                                  //   MaterialPageRoute<void>(
-                                  //     builder: (BuildContext context) => RegisterPage(),
-                                  //   ),
-                                  // );
                                 }
                             ))
                       ],

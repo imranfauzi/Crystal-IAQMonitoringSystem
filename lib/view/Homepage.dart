@@ -1,25 +1,16 @@
-import 'dart:ffi';
-
-import 'package:crystal/authentication_service.dart';
 import 'package:crystal/controller/authController.dart';
 import 'package:crystal/model/notificationAPI.dart';
 import 'package:crystal/model/sensor_data.dart';
-
-import 'package:crystal/view/Setting.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
-class Homepage extends StatefulWidget {
 
+class Homepage extends StatefulWidget {
   String payload;
 
   Homepage({this.payload});
@@ -29,14 +20,26 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  List<double> data1 = [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ];
 
-
-  List<double> data1 = [0.0, -2.0, 3.5, -2.0, 0.5, 0.7, 0.8, 1.0, 2.0, 3.0, 3.2];
-  var notice = [
-    "Great air quality",
-    "Good air quality",
-    "Medium air quality",
-    "Poor air quality"
+  var iaqStatus = [
+    "Good Air Quality",
+    "Moderate Air Quality",
+    "Unhealthy Air Quality",
+    "Very Unhealthy Air Quality",
+    "Hazardous Air Quality"
   ];
 
   List<Color> gradientColors = [
@@ -44,56 +47,7 @@ class _HomepageState extends State<Homepage> {
     const Color(0xff02d39a),
   ];
 
-  // Material info(String username) {
-  //   return Material(
-  //     color: Color(0xFF2E294E),
-  //     elevation: 14.0,
-  //     borderRadius: BorderRadius.circular(10.0),
-  //     shadowColor: Color(0xFF820263),
-  //     child: Padding(
-  //       padding: EdgeInsets.all(8.0),
-  //       child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.start,
-  //           children: <Widget>[
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.end,
-  //               children: [
-  //                 Text(
-  //                   "SignOut",
-  //                   style: TextStyle(color: Color(0xFF70D6FF), fontSize: 15),
-  //                 ),
-  //                 IconButton(
-  //                     color: Colors.white,
-  //                     iconSize: 30,
-  //                     icon: Icon(Icons.logout),
-  //                     onPressed: () {
-  //                       context.read<AuthenticationService>().signOut();
-  //                     }),
-  //               ],
-  //             ),
-  //             Padding(
-  //               padding: EdgeInsets.all(1.0),
-  //               child: Text(
-  //                 "User: " + username,
-  //                 style: TextStyle(
-  //                   fontSize: 20.0,
-  //                   color: Colors.white,
-  //                 ),
-  //               ),
-  //             ),
-  //             IconButton(
-  //                 color: Colors.white,
-  //                 iconSize: 30,
-  //                 icon: Icon(Icons.settings),
-  //                 onPressed: () {
-  //                   Get.to(() => Setting());
-  //                 })
-  //           ]),
-  //     ),
-  //   );
-  // }
-
-  Material chart1(String title, String priceVal, String subtitle, List data) {
+  Material AQI_Chart(String title, String priceVal, String subtitle, List data) {
     return Material(
       color: Color(0xFF2E294E),
       elevation: 14.0,
@@ -112,51 +66,31 @@ class _HomepageState extends State<Homepage> {
                     padding: EdgeInsets.all(1.0),
                     child: Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 25.0,
-                        color: Colors.yellow,
-                       // color: Color(0xFFEE964B),
+                      style: TextStyle(fontSize: 25.0, color: Colors.yellow,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Text(
-                      priceVal,
+                  SizedBox(height: 20,),
+                  Padding(padding: EdgeInsets.all(1.0),
+                    child: Text(priceVal,
                       style: TextStyle(fontSize: 30.0, color: Colors.white),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white54,
+                  SizedBox(height: 20,),
+                  Padding(padding: EdgeInsets.all(1.0),
+                    child: Text(subtitle,
+                      style: TextStyle(fontSize: 20.0, color: Colors.white54,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30,),
                   Padding(
                     padding: EdgeInsets.all(5.0),
-                    child: new Sparkline(
-                      data: data,
-                      lineColor: Color(0xffff6101),
+                    child: new Sparkline(data: data,lineColor: Color(0xffff6101),
                       pointsMode: PointsMode.last,
                       pointColor: Colors.yellow,
                       pointSize: 10.0,
-                    ),
-                  ),
-                ],
-              ),
+                    ),),],),
             ],
           ),
         ),
@@ -164,199 +98,116 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  // Material ppmText(String title, String subtitle) {
-  //   return Material(
-  //     color: Color(0xFF2E294E),
-  //     elevation: 14.0,
-  //     borderRadius: BorderRadius.circular(24.0),
-  //     shadowColor: Color(0x802196F3),
-  //     child: Center(
-  //       child: Padding(
-  //         padding: EdgeInsets.all(8.0),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: <Widget>[
-  //             Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Padding(
-  //                   padding: EdgeInsets.all(8.0),
-  //                   child: Text(
-  //                     title,
-  //                     style: TextStyle(
-  //                         fontSize: 25.0,
-  //                        color: Colors.yellow,
-  //                        // color: Color(0xFFF95738),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: EdgeInsets.all(8.0),
-  //                   child: Text(
-  //                     subtitle,
-  //                     maxLines: 5,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     style: TextStyle(fontSize: 15.0, color: Colors.white),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  final dbRefHumidity =
+      FirebaseDatabase.instance.reference().child("DHT11").child("Humidity");
+  final dbRefTemperature =
+      FirebaseDatabase.instance.reference().child("DHT11").child("Temperature");
+  final dbRefAQI =
+      FirebaseDatabase.instance.reference().child("MQ135").child("PPM").child("value");
+  final dbRefDate =
+      FirebaseDatabase.instance.reference().child("MQ135").child("PPM").child("date");
 
-  Material ppmText1(String title, String subtitle) {
-    return Material(
-      color: Color(0xFF2E294E),
-      elevation: 14.0,
-      borderRadius: BorderRadius.circular(24.0),
-      shadowColor: Color(0x802196F3),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Container(
-            height: 150,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                        fontSize: 25.0,
-                        color: Colors.yellow,
-                        //color: Color(0xFFEE964B),
-                        ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 30.0, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Material ppmText2(String title, String subtitle) {
-    return Material(
-      color: Color(0xFF2E294E),
-      elevation: 14.0,
-      borderRadius: BorderRadius.circular(24.0),
-      shadowColor: Color(0x802196F3),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                          fontSize: 30.0,
-                          color: Colors.yellow,
-                         // color: Color(0xFFEE964B),
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      subtitle,
-                      style: TextStyle(fontSize: 30.0, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  final dbRefHumidity = FirebaseDatabase.instance.reference().child("DHT11").child("Humidity");
-  final dbRefTemperature = FirebaseDatabase.instance.reference().child("DHT11").child("Temperature");
-  final dbRefAQI = FirebaseDatabase.instance.reference().child("MQ135").child("PPM");
 
   List<String> listsHumidity = [];
   List<String> listsTemperature = [];
+
+  //to add aqi value
   List<String> listsAQI = [];
-  List<String> listsAQI1 = [""];
+  //to store cleaned aqi value
   List<double> listsPPM = [];
-  List<double> listPPM1 = [0,0,0];
-  bool noti = true;
-  bool notiButt = false;
-  String textValue ="Notification ON";
+  //to store aqi value for aqi history graph
+  List<double> listPPM1 = [0, 0, 0];
   var average3;
   var average2;
   var average1;
 
-NotificationAPI notificationAPI = new NotificationAPI();
- SensorData sensorData = new SensorData();
+  bool noti = true;
+  bool notiButt = false;
+  String textValue = "Notification ON";
+
+  double temp = 100;
+  double iaq = 1000;
+
+
+  NotificationAPI notificationAPI = new NotificationAPI();
+  SensorData sensorData = new SensorData();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _signOut() async {
-    print("logout");
-    await _auth.signOut();
+  void toggleSwitch(bool value) {
+    if (notiButt == false) {
+      setState(() {
+        notiButt = true;
+        textValue = 'Notification OFF';
+      });
+      print('Notification OFF');
+    } else {
+      setState(() {
+        notiButt = false;
+      textValue = 'Notification ON';
+      });
+    }
   }
 
-  Future<void> _offNotify() async {
-    noti = false;
-    notiButt = false; //kalau true meaning no notification
-  }
-
-  void toggleSwitch(bool value){
-
-      if(notiButt == false)
-      {
-        setState(() {
-          notiButt = true;
-          textValue = 'Notification OFF';
-        });
-        print('Notification OFF');
+  Widget iaqStatusText(double value, double size){
+    if(value<51){
+      return Text(iaqStatus[0], style: TextStyle(fontSize: size, color: Colors.blueAccent),);
+    }
+    if(value>=51 && value<101){
+      return Text(iaqStatus[1], style: TextStyle(fontSize: size, color: Colors.green),);
+    }
+    if(value>=101 && value<201){
+      return Text(iaqStatus[2], style: TextStyle(fontSize: size, color: Colors.yellow),);
+    }
+    if(value>=201 && value<301){
+        return Text(iaqStatus[2], style: TextStyle(fontSize: size, color: Colors.orange),);
+    }
+    else{
+      if(value==1000){
+        return Text("Loading...", style: TextStyle(fontSize: size, color: Colors.blue),);
+      } else {
+        return Text(iaqStatus[3], style: TextStyle(fontSize: size, color: Colors.red),);
       }
-      else
-      {
-        setState(() {
-          notiButt = false;
-          textValue = 'Notification ON';
-        });
-        print('Notification ON');
+
+    }
+}
+
+  Widget temperatureStatusText(double value, double size){
+
+    if(value>=23 && value<=26){
+      return Text("Normal", style: TextStyle(fontSize: size, color: Colors.green),);
+    }
+    if(value>26){
+      if(value==100){
+        return Text("Loading...", style: TextStyle(fontSize: size, color: Colors.blueAccent),);
+      }else {
+        return Text("Above Normal", style: TextStyle(fontSize: size, color: Colors.orange),);
       }
-      print(" notiButt $notiButt");
+
+    }
+    if(value<23){
+      return Text("Below Normal", style: TextStyle(fontSize: size, color: Colors.blueAccent),);
+    }
+
 
   }
 
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     NotificationAPI.init();
     listenNotification();
-    Workmanager().initialize(NotificationAPI.callbackDispatcher, isInDebugMode: true);
+    Workmanager()
+        .initialize(NotificationAPI.callbackDispatcher, isInDebugMode: true);
+    iaqStatusText;
   }
 
-  void listenNotification() => NotificationAPI.onNotifications.stream.listen(onClickNotification);
-  
-  void onClickNotification(String payload) => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Homepage(payload: payload)));
+  void listenNotification() =>
+      NotificationAPI.onNotifications.stream.listen(onClickNotification);
 
+  void onClickNotification(String payload) => Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => Homepage(payload: payload)));
 
   @override
   Widget build(BuildContext context) {
@@ -366,41 +217,29 @@ NotificationAPI notificationAPI = new NotificationAPI();
     return Scaffold(
       body: SafeArea(
         child: Container(
-
           child: Center(
             child: Stack(
               children: [
-
+                //Title
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: w,
-                    child: Expanded(
-                        child: Image(
-                      image: AssetImage('assets/images/sun.png'),
-                      height: h / 2,
-                      width: w / 2,
-                      colorBlendMode: BlendMode.lighten
-                    )),
-                    decoration: BoxDecoration(
-                        //  color: Colors.orange,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    height: h / 2.5,
-
-                  ),
+                  padding: const EdgeInsets.only(top: 60, left: 20),
+                  child: Text('CRYSTAL: Indoor Air Quality (IAQ)\nMonitoring System',
+                    textAlign: TextAlign.center,style: TextStyle(fontSize: 25,
+                        color: Colors.blueGrey),),
                 ),
-                // *********Gambar Sun**************
+                // *********Top element**********
+                //Sign out Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
                       onPressed: () => AuthController().signOut(),
                       style: ButtonStyle(
-                          overlayColor: MaterialStateColor.resolveWith((states) => Colors.red)
-                      ),
-                      child: Icon(Icons.logout, color: Colors.red, ), ),
-
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Colors.red)),
+                      child: Icon(Icons.logout, color: Colors.red,),
+                    ),
+                    //Notification Switch
                     Row(
                       children: [
                         Text(textValue),
@@ -411,21 +250,206 @@ NotificationAPI notificationAPI = new NotificationAPI();
                           inactiveTrackColor: Colors.greenAccent,
                           activeColor: Colors.redAccent,
                           activeTrackColor: Colors.red,
-                        ),
-                      ],
-                    )
-                  ],
+                        ),],)],),
+                // *********Bottom element****************
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5, top: 550),
+                  child: ListView(
+                    children: [
+                      //Air Quality Index
+                      StreamBuilder(
+                          stream: dbRefAQI.onValue,
+                          builder: (context, AsyncSnapshot<Event> snapshot) {
+                            if (snapshot.hasData) {
+                              listsAQI.clear();
+                              DataSnapshot dataValues = snapshot.data.snapshot;
+                              Map<dynamic, dynamic> values = dataValues.value;
+                              values.forEach((key, values) {
+                                if(values!="nan"){
+                                  listsAQI.add(values);
+                                }});
+                              if (listsAQI.length < 70) {
+                                listsPPM = data1;
+                              } else {
+                                listsPPM = listsAQI
+                                    .map(double.parse)
+                                    .toList()
+                                    .sublist(listsAQI.length - 70,
+                                    listsAQI.length - 1);
+                                //insert data to SensorData Model
+                                sensorData.ppm = double.parse(
+                                    (listsAQI[listsAQI.length - 1])
+                                        .substring(0, 3));
+                                iaq = sensorData.ppm;
+                                if (double.parse((listsAQI[listsAQI.length - 1])
+                                        .substring(0, 3)) > 100 && noti == true &&
+                                    notiButt == false) {
+                                  NotificationAPI.showNotification(
+                                      title: "BAD Air Quality!!",
+                                      body:
+                                      "High air quality index detected,\nplease improve the space airflow.",
+                                      payload: "payload");
+                                  noti = false;
+                                  //limit a notification per minute
+                                  Future.delayed(const Duration(minutes: 1), () {
+                                        setState(() {noti = true;});
+                                      });}}
+                              return  Card(
+                                color: Colors.greenAccent,
+                                elevation: 6,
+                                child: ListTile(
+                                  trailing: Text("IAQ"),
+                                  leading: Icon(Icons.nature_rounded),
+                                  title: Text( (double.tryParse(listsAQI[listsAQI.length - 1].substring(0, 3)) == null)?
+                                      "loading..." : listsAQI[listsAQI.length - 1].substring(0, 3)+ "ppm"),
+                                ),
+                              );
+                            }
+                            return CircularProgressIndicator();
+                          }),
+                      //Temperature of air
+                      StreamBuilder(
+                          stream: dbRefTemperature.onValue,
+                          builder: (context, AsyncSnapshot<Event> snapshot) {
+                            if (snapshot.hasData) {
+                              listsTemperature.clear();
+                              DataSnapshot dataValues = snapshot.data.snapshot;
+                              Map<dynamic, dynamic> values = dataValues.value;
+                              values.forEach((key, values) {
+                                if(values!="nan"){
+                                  listsTemperature.add(values);
+                                }});
+                              sensorData.temperature = double.parse(listsTemperature
+                              [listsTemperature.length-1].substring(0,2));
+                              temp = sensorData.temperature;
+                              print("Temperature: $temp");
+                              return new ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: 1,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Card(
+                                      color: Colors.cyanAccent,
+                                      elevation: 6,
+                                      child: ListTile(
+                                        trailing: Text("Temperature"),
+                                        leading:
+                                        Icon(Icons.thermostat_outlined),
+                                        title: Text((double.tryParse(listsTemperature[listsTemperature.length-1]
+                                            .substring(0, 2))==null) ? "Loading..." :listsTemperature
+                                        [listsTemperature.length-1]
+                                            .substring(0, 2) +
+                                            "°C"),
+                                      ),
+                                    );
+                                  });
+                            }
+                            return CircularProgressIndicator();
+                          }),
+                      //Humidity of air
+                      StreamBuilder(
+                          stream: dbRefHumidity.onValue,
+                          builder: (context, AsyncSnapshot<Event> snapshot) {
+                            if (snapshot.hasData) {
+                              listsHumidity.clear();
+                              DataSnapshot dataValues = snapshot.data.snapshot;
+                              Map<dynamic, dynamic> values = dataValues.value;
+                              values.forEach((key, values) {
+                                if(values!="nan"){
+                                  listsHumidity.add(values);
+                                }});
+                              return new ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: 1,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    print("This is the index $index");
+                                    return Card(
+                                      color: Colors.lightBlueAccent,
+                                      elevation: 6,
+                                      child: ListTile(
+                                        trailing: Text("Humidity"),
+                                        leading: Icon(Icons.water),
+                                        title: Text((double.tryParse(listsHumidity
+                                        [listsHumidity.length-1]
+                                            .substring(0, 2)) == null )?"Loading...":listsHumidity
+                                        [listsHumidity.length-1]
+                                                .substring(0, 2) +
+                                            "%"),
+                                      ),
+                                    );
+                                  });
+                            }
+                            return CircularProgressIndicator();
+                          }),
+                    ],
+                  ),
                 ),
-                // *********Column bawah****************
+                // *********Graph****************
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SizedBox(height: 150,),
                     Container(
                       height: h / 2,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          //******Air Quality
+                          //******Sun Picture and Status of sensors************
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: w,
+                              child: Column(
+                                children: [
+                                  Image(
+                                      image: AssetImage('assets/images/sun.png'),
+                                      height: h / 3,
+                                      width: w / 3,
+                                      colorBlendMode: BlendMode.lighten),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                   children: [
+                                     Column(
+                                       children: [
+                                         Text("IAQ Status\n", style: TextStyle(fontSize: 20),),
+                                         Container(
+                                           padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.green,
+                                                 ),
+                                               borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    ),
+                                             child: iaqStatusText((sensorData.ppm!=null) ? sensorData.ppm: 1000, 20,)),
+                                       ],
+                                     ),
+                                     Column(
+                                       children: [
+                                         Text("Temperature Status\n", style: TextStyle(fontSize: 20),),
+                                         Container(
+                                           padding: EdgeInsets.all(10),
+                                           child:temperatureStatusText((temp!=null) ? temp: 100, 20),
+                                           decoration: BoxDecoration(
+                                             border: Border.all(
+                                               color: Colors.blue,
+                                             ),
+                                             borderRadius: BorderRadius.all(Radius.circular(20)),
+                                           ),
+                                         ),
+                                       ],
+                                     )
+                                   ],
+                                  ),
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                //  color: Colors.orange,
+                                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                              height: h / 2.5,
+                            ),
+                          ),
+                          //******Air Quality Graph
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
@@ -438,107 +462,24 @@ NotificationAPI notificationAPI = new NotificationAPI();
                                       Map<dynamic, dynamic> values = dataValues.value;
 
                                       values.forEach((key, values) {
-                                        listsAQI.add(values);
-                                        listsAQI1.clear();
-                                        listsAQI1.add(values);
-
-                                      });
-
+                                        if(values!="nan"){
+                                          listsAQI.add(values);
+                                        }});
                                       if(listsAQI.length<70){
                                         listsPPM = data1;
-                                      }
-                                      else{
+                                      } else{
                                         listsPPM = listsAQI.map(double.parse).toList().sublist(listsAQI.length-70, listsAQI.length-1);
                                         //masukkan data di model sensor_data
-                                        sensorData.ppm = double.parse((listsAQI1[listsAQI1.length-1]).substring(0, 3));
-                                        print("Nilai ${sensorData.ppm}");
-
-                                        if (double.parse((listsAQI1[listsAQI1.length-1]).substring(0, 3)) > 315 && noti == true && notiButt == false ){
-
-                                          print("Notification pernah $noti");
-
-                                          NotificationAPI.showNotification(
-                                            title: "BAD Air Quality!!",
-                                            body: "Low air quality index detected,\nplease improve the space airflow.",
-                                            payload: "payload"
-                                          );
-                                            noti = false;
-                                            // setiap satu minit dia akan bunyi lagi kalau aqi masih tinggi, untuk limit berapa
-                                          // banyak noti yang boleh bunyi dlam satu minit.
-                                            Future.delayed(const Duration(minutes: 1), () {
-                                              setState(() {
-                                                noti = true;
-                                              });
-                                            });
-
-                                          print("Notification $noti");
-
-                                        }
-
-                                      }
-
-                                      listsAQI1.clear();
-
-
-
-                                      return chart1("Indoor Air Quality",
+                                        sensorData.ppm = double.parse((listsAQI[listsAQI.length-1]).substring(0, 2));
+                                      } return AQI_Chart("Indoor Air Quality",
                                           listsAQI[listsAQI.length-1].substring(0, 3) + "ppm",
-                                          (int.parse((listsAQI[listsAQI.length-1]).substring(0, 2)) - 100 ).toString()+ " more than normal", listsPPM);
-                                    }
-                                    return CircularProgressIndicator();
+                                          "updated every 3 seconds", listsPPM);
+                                    } return CircularProgressIndicator();
                                   }),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                              width: w / 1.04,
+                              decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(20))), width: w / 1.04,
                             ),
                           ),
-                          // *****Humidity and Temperature
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  StreamBuilder(
-                                      stream: dbRefTemperature.onValue,
-                                      builder: (context, AsyncSnapshot<Event> snapshot) {
-                                        if (snapshot.hasData) {
-                                          listsTemperature.clear();
-                                          DataSnapshot dataValues = snapshot.data.snapshot;
-                                          Map<dynamic, dynamic> values = dataValues.value;
-                                          values.forEach((key, values) {
-                                            listsTemperature.add(values);
-                                          });
-                                          return ppmText1("Temperature", listsTemperature[listsTemperature.length-1].substring(0, 2) + "°C");
-                                        }
-                                        return CircularProgressIndicator();
-                                      }),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  StreamBuilder(
-                                      stream: dbRefHumidity.onValue,
-                                      builder: (context, AsyncSnapshot<Event> snapshot) {
-                                        if (snapshot.hasData) {
-                                          listsHumidity.clear();
-                                          DataSnapshot dataValues = snapshot.data.snapshot;
-                                          Map<dynamic, dynamic> values = dataValues.value;
-                                          values.forEach((key, values) {
-                                            listsHumidity.add(values);
-                                          });
-                                          return ppmText1("Humidity", listsHumidity[listsHumidity.length-1].substring(0, 2)+ "%");
-                                        }
-                                        return CircularProgressIndicator();
-                                      }),
-                                ],
-                              ),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                              width: w / 1.1,
-                            ),
-                          ),
-                          // History graph
+                          //******History Air Quality Graph
                           Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Container(
@@ -550,61 +491,47 @@ NotificationAPI notificationAPI = new NotificationAPI();
                                       listsAQI.clear();
                                       DataSnapshot dataValues = snapshot.data.snapshot;
                                       Map<dynamic, dynamic> values = dataValues.value;
-
-
-
-
                                       values.forEach((key, values) {
-                                        listsAQI.add(values);
-                                      });
-
-
+                                        if(values!="nan") {
+                                          listsAQI.add(values);
+                                        }});
                                       if(listsAQI.length<70){
                                         listPPM1 = [0.1, 0.1, 0.1];
-                                      }else{
+                                      } else{
                                         average3 = (listsAQI.map(double.parse).toList().sublist(listsAQI.length-60, listsAQI.length-40)
-                                            .map((m) => m).reduce((value, element) => value + element))/(20)/1000;
+                                            .map((m) => m).reduce((value, element) => value + element))/(20)/300;
                                         average2 = (listsAQI.map(double.parse).toList().sublist(listsAQI.length-40, listsAQI.length-20)
-                                            .map((m) => m).reduce((value, element) => value + element))/(20)/1000;
+                                            .map((m) => m).reduce((value, element) => value + element))/(20)/300;
                                         average1 = (listsAQI.map(double.parse).toList().sublist(listsAQI.length-20, listsAQI.length-1)
-                                            .map((m) => m).reduce((value, element) => value + element))/(20)/1000;
+                                            .map((m) => m).reduce((value, element) => value + element))/(20)/300;
                                         print("ini average $average3");
                                         print("average2: $average2");
                                         print("average1: $average1");
-                                     //   listPPM1 = listsAQI.map(double.parse).toList().sublist(listsAQI.length-4, listsAQI.length-1);
-                                     //    listPPM1.insert(0, average3);
-                                     //    listPPM1.insert(1, average2);
-                                     //    listPPM1.insert(2, average1);
                                         listPPM1.replaceRange(0, 3, [average3,average2,average1]);
                                         print("listPPM1 $listPPM1");
                                       }
-
                                       List<Feature> features = [
-                                        Feature(
-                                          title: "Flutter",
-                                          color: Colors.yellow,
-                                          data: listPPM1,
+                                        Feature(title: "Flutter", color: Colors.yellow, data: listPPM1,
                                         )];
-
                                       return Stack(
                                         children: [
                                           Container(
-                                            child: Column(
-                                              children: [
-                                                Text("3DA: ${(average3*1000)} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
-                                                SizedBox(height: 10),
-                                                Text("2DA: ${average2*1000} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
-                                                SizedBox(height: 10),
-                                                Text("1DA: ${average1*1000} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
-                                              ],
-                                            ),
-                                            alignment: Alignment.center,
+                                            child: Text("IAQ History Data", style: TextStyle(color: Colors.yellow, fontSize: 20)),
+                                            // child: Column(
+                                            //   children: [
+                                            //     Text("3DA: ${(average3*300)} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
+                                            //     SizedBox(height: 10),
+                                            //     Text("2DA: ${average2*300} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
+                                            //     SizedBox(height: 10),
+                                            //     Text("1DA: ${average1*300} ppm", style: TextStyle(color: Colors.yellow, fontSize: 25),),
+                                            //   ],
+                                            // ),
+                                            alignment: Alignment.topRight,
                                           ),
                                           LineGraph(
-                                            features: features,
-                                            size: Size(350, 350),
+                                            features: features, size: Size(350, 350),
                                             labelX: ['3 Days ago', '2 Days ago', '1 Days ago'],
-                                            labelY: ['100', '.', '300', '.', '500', '.', '700', '.', '900', '.'],
+                                            labelY: ['50','100','150','200','250','300'],
                                             //    showDescription: true,
                                             graphColor: Colors.white,
                                           ),
@@ -621,6 +548,63 @@ NotificationAPI notificationAPI = new NotificationAPI();
                               width: w / 1.1,
                             ),
                           ),
+                          //
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              child:   StreamBuilder(
+                                  stream: dbRefAQI.onValue,
+                                  builder: (context, AsyncSnapshot<Event> snapshot) {
+                                    if (snapshot.hasData) {
+                                      listsAQI.clear();
+                                      DataSnapshot dataValues = snapshot.data.snapshot;
+                                      Map<dynamic, dynamic> values = dataValues.value;
+                                      values.forEach((key, values) {
+                                        if(values!="nan"){
+                                          listsAQI.add(values);
+                                        }});
+                                      if (listsAQI.length < 70) {
+                                        listsPPM = data1;
+                                      } else {
+                                        listsPPM = listsAQI
+                                            .map(double.parse)
+                                            .toList()
+                                            .sublist(listsAQI.length - 70,
+                                            listsAQI.length - 1);
+                                        //insert data to SensorData Model
+                                        sensorData.ppm = double.parse(
+                                            (listsAQI[listsAQI.length - 1])
+                                                .substring(0, 3));
+                                        iaq = sensorData.ppm;
+                                        if (double.parse((listsAQI[listsAQI.length - 1])
+                                            .substring(0, 3)) > 100 && noti == true &&
+                                            notiButt == false) {
+                                          NotificationAPI.showNotification(
+                                              title: "BAD Air Quality!!",
+                                              body:
+                                              "High air quality index detected,\nplease improve the space airflow.",
+                                              payload: "payload");
+                                          noti = false;
+                                          //limit a notification per minute
+                                          Future.delayed(const Duration(minutes: 1), () {
+                                            setState(() {noti = true;});
+                                          });}}
+                                      return  Card(
+                                        color: Colors.greenAccent,
+                                        elevation: 6,
+                                        child: ListTile(
+                                          trailing: Text("IAQ"),
+                                          leading: Icon(Icons.nature_rounded),
+                                          title: Text( (double.tryParse(listsAQI[listsAQI.length - 1].substring(0, 3)) == null)?
+                                          "loading..." : listsAQI[listsAQI.length - 1].substring(0, 3)+ "ppm"),
+                                        ),
+                                      );
+                                    }
+                                    return CircularProgressIndicator();
+                                  }),
+                              decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(20))), width: w / 1.04,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -635,119 +619,97 @@ NotificationAPI notificationAPI = new NotificationAPI();
   }
 }
 
-
-
-    // return Scaffold(
-    //     body: Column(
-    //       children: [
-    //         StreamBuilder(
-    //             stream: dbRefHumidity.onValue,
-    //             builder: (context, AsyncSnapshot<Event> snapshot) {
-    //               if (snapshot.hasData) {
-    //                 listsHumidity.clear();
-    //                 DataSnapshot dataValues = snapshot.data.snapshot;
-    //                 Map<dynamic, dynamic> values = dataValues.value;
-    //                 values.forEach((key, values) {
-    //                   listsHumidity.add(values);
-    //                 });
-    //                 return new ListView.builder(
-    //                     shrinkWrap: true,
-    //                     itemCount: listsHumidity.length,
-    //                     itemBuilder: (BuildContext context, int index) {
-    //                       return Card(
-    //                         child: Column(
-    //                           crossAxisAlignment: CrossAxisAlignment.start,
-    //                           children: <Widget>[
-    //                             Text("Humidity: " + listsHumidity[index]),
-    //                           ],
-    //                         ),
-    //                       );
-    //                     });
-    //               }
-    //               return CircularProgressIndicator();
-    //             }),
-    //         StreamBuilder(
-    //             stream: dbRefTemperature.onValue,
-    //             builder: (context, AsyncSnapshot<Event> snapshot) {
-    //               if (snapshot.hasData) {
-    //                 listsTemperature.clear();
-    //                 DataSnapshot dataValues = snapshot.data.snapshot;
-    //                 Map<dynamic, dynamic> values = dataValues.value;
-    //                 values.forEach((key, values) {
-    //                   listsTemperature.add(values);
-    //                 });
-    //                 return new ListView.builder(
-    //                     shrinkWrap: true,
-    //                     itemCount: listsTemperature.length,
-    //                     itemBuilder: (BuildContext context, int index) {
-    //                       return Card(
-    //                         child: Column(
-    //                           crossAxisAlignment: CrossAxisAlignment.start,
-    //                           children: <Widget>[
-    //                             Text("Temperature: " + listsTemperature[index]),
-    //                           ],
-    //                         ),
-    //                       );
-    //                     });
-    //               }
-    //               return CircularProgressIndicator();
-    //             }),
-    //       ],
-    //     ));
-//   }
+// 0.0,
+// -2.0,
+// 3.5,
+// -2.0,
+// 0.5,
+// 0.7,
+// 0.8,
+// 1.0,
+// 2.0,
+// 3.0,
+// 3.2
+// ];
+//
+// Material ppmText1(String title, String subtitle) {
+//   return Material(
+//     color: Color(0xFF2E294E),
+//     elevation: 14.0,
+//     borderRadius: BorderRadius.circular(24.0),
+//     shadowColor: Color(0x802196F3),
+//     child: Center(
+//       child: Padding(
+//         padding: EdgeInsets.all(8.0),
+//         child: Container(
+//           height: 150,
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               Padding(
+//                 padding: EdgeInsets.all(8.0),
+//                 child: Text(
+//                   title,
+//                   style: TextStyle(
+//                     fontSize: 25.0,
+//                     color: Colors.yellow,
+//                     //color: Color(0xFFEE964B),
+//                   ),
+//                 ),
+//               ),
+//               Padding(
+//                 padding: EdgeInsets.all(8.0),
+//                 child: Text(
+//                   subtitle,
+//                   style: TextStyle(fontSize: 30.0, color: Colors.white),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
 // }
-
-//   Widget build(BuildContext context) {
 //
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: Container(
-//         child: StaggeredGridView.count(
-//           crossAxisCount: 4,
-//           mainAxisSpacing: 1,
-//           crossAxisSpacing: 5,
-//           children: [
-//             Padding(
-//                 padding: const EdgeInsets.only(top: 8),
-//                // child: info("${user?.email}")),
-//                 child: info("username")),
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: chart1("LIVE Indoor Air Quality Level", "120ppm",
-//                   "+12.54 than normal"),
+// Material ppmText2(String title, String subtitle) {
+//   return Material(
+//     color: Color(0xFF2E294E),
+//     elevation: 14.0,
+//     borderRadius: BorderRadius.circular(24.0),
+//     shadowColor: Color(0x802196F3),
+//     child: Center(
+//       child: Padding(
+//         padding: EdgeInsets.all(8.0),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: <Widget>[
+//                 Padding(
+//                   padding: EdgeInsets.all(8.0),
+//                   child: Text(
+//                     title,
+//                     style: TextStyle(
+//                         fontSize: 30.0,
+//                         color: Colors.yellow,
+//                         // color: Color(0xFFEE964B),
+//                         fontWeight: FontWeight.bold),
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: EdgeInsets.all(8.0),
+//                   child: Text(
+//                     subtitle,
+//                     style: TextStyle(fontSize: 30.0, color: Colors.white),
+//                   ),
+//                 ),
+//               ],
 //             ),
-//             // Padding(
-//             //   padding: const EdgeInsets.all(8.0),
-//             //   child: Graph(),
-//             // ),
-//             // Padding(
-//             //   padding: const EdgeInsets.all(8.0),
-//             //   child: Graph2(),
-//             // ),
-//             Padding(
-//               padding: EdgeInsets.all(8),
-//               child: ppmText("ALERT", notice[3]),
-//             ),
-//             Padding(
-//               padding: EdgeInsets.only(right: 8),
-//               child: ppmText1("Temperature", "27 ℃"),
-//             ),
-//             Padding(
-//               padding: EdgeInsets.only(right: 8),
-//               child: ppmText2("Humidity", "27%"),
-//             ),
-//           ],
-//           staggeredTiles: [
-//             StaggeredTile.extent(4, 250.0),
-//             StaggeredTile.extent(4, 250.0),
-//
-//             //    StaggeredTile.extent(4, 250.0),
-//             StaggeredTile.extent(2, 250.0),
-//             StaggeredTile.extent(2, 120.0),
-//             StaggeredTile.extent(2, 120.0),
 //           ],
 //         ),
 //       ),
-//     );
-//   }
+//     ),
+//   );
 // }

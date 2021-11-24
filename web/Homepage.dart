@@ -1,11 +1,9 @@
-import 'package:crystal/authentication_service.dart';
-import 'package:crystal/view/Graph.dart';
 import 'package:crystal/view/Setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
+
 
 class Homepage extends StatefulWidget {
 
