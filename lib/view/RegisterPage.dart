@@ -81,6 +81,22 @@ class RegisterPage extends GetWidget<AuthController> {
         _password = value;
         onPasswordChange(value);
       },
+      validator: (String pswd) {
+        if(pswd.isEmpty){
+          return "Password is required";
+        }
+         else {
+          if(!RegExp(
+         r'(?=.*?[0-9])'
+          r'(?=.*?[A-Z])'
+          r'(?=.*?[a-z])'
+          r'(?=.*?[!@#\$&*~._-])'
+          ).hasMatch(pswd) || pswd.length <8 ) {
+            return "Please follow the password requirements";
+          }
+        }
+        return null;
+      },
       obscureText: isHidden.value,
       decoration: InputDecoration(
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),

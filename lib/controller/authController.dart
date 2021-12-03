@@ -15,11 +15,16 @@ class AuthController extends GetxController {
 
   Future<void> SignUp({String email, String password}) async {
     try{
+
       await _auth.createUserWithEmailAndPassword(email: email, password: password);
       Get.back();
     } catch (e) {
       if (e.code == 'weak-password') {
-        Get.snackbar("The password provided is too weak.", "Password should be at least 8 characters", snackPosition: SnackPosition.BOTTOM);
+        if(password.length<8){
+          Get.snackbar("The password provided is too weak.", "Password should be at least 8 characters", snackPosition: SnackPosition.BOTTOM);
+        } else{
+          Get.snackbar("The password provided is too weak.", "Password should be at least 8 characters", snackPosition: SnackPosition.BOTTOM);
+        }
       } else if (e.code == 'email-already-in-use') {
         Get.snackbar("The account already exists for that email.", e.message, snackPosition: SnackPosition.BOTTOM);
       }

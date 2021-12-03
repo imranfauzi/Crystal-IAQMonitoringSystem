@@ -32,6 +32,7 @@ dependencies:
   flutter_local_notifications: ^8.1.1+1
   rxdart: ^0.27.1
   workmanager: ^0.4.1
+  animated_text_kit: ^4.2.1
 
 
   flutter:
