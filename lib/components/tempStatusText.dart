@@ -18,10 +18,10 @@ class _TempStatusTextState extends State<TempStatusText> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Temperature Status\n", style: TextStyle(fontSize: 20),),
+        Text("Temperature Status\n", style: TextStyle(fontSize: 18),),
         Container(
           padding: EdgeInsets.all(10),
-          child:TemperatureStatus(value: (widget.temp!=null) ? widget.temp: 100, size: 20),
+          child:TemperatureStatus(value: (widget.temp!=null) ? widget.temp: 100, size: 17),
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.blue,

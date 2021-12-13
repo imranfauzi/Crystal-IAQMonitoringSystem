@@ -21,12 +21,12 @@ class RealtimeAQI extends StatefulWidget {
 
 class _RealtimeAQIState extends State<RealtimeAQI> {
 
-  List<double> data1 = [4.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
+  List<double> data1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
   List<double> listsAQI2 = [];
   List<double> listsPPM2 = [];
 
   SensorData sensorData = new SensorData();
-  Material AQI_Chart(String title, String priceVal, String subtitle, List data) {
+  Material AQI_Chart(String title, String val, String subtitle, List data) {
     return Material(
       color: Color(0xFF2E294E),
       elevation: 14.0,
@@ -35,9 +35,8 @@ class _RealtimeAQIState extends State<RealtimeAQI> {
       child: Center(
         child: Padding(
           padding: EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+          child: ListView(
+            children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -51,7 +50,7 @@ class _RealtimeAQIState extends State<RealtimeAQI> {
                   ),
                   SizedBox(height: 20,),
                   Padding(padding: EdgeInsets.all(1.0),
-                    child: Text(priceVal,
+                    child: Text(val,
                       style: TextStyle(fontSize: 30.0, color: Colors.white),
                     ),
                   ),

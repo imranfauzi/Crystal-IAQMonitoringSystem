@@ -33,6 +33,11 @@ dependencies:
   rxdart: ^0.27.1
   workmanager: ^0.4.1
   animated_text_kit: ^4.2.1
+  syncfusion_flutter_charts: ^19.3.57
+  syncfusion_flutter_core: ^19.3.57
+  syncfusion_flutter_pdf: ^19.3.57-beta
+  path_provider: ^2.0.8
+  open_file: ^3.2.0
 
 
   flutter:
@@ -73,10 +78,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Muli
+      fonts:
+        - asset: assets/fonts/Muli.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

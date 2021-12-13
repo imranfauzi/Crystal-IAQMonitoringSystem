@@ -30,8 +30,10 @@ class _IAQStatusTextState extends State<IAQStatusText> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("IAQ Status\n", style: TextStyle(fontSize: 20),),
+        Text("IAQ Status\n", style: TextStyle(fontSize: 18),),
         Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -40,7 +42,7 @@ class _IAQStatusTextState extends State<IAQStatusText> {
               ),
               borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
-            child: IAQStatus(iaqStatus: iaqStatus, value: (widget.sensorData.ppm!=null) ? widget.sensorData.ppm: 1000, size: 20)),
+            child: IAQStatus(iaqStatus: iaqStatus, value: (widget.sensorData.ppm!=null) ? widget.sensorData.ppm: 1000, size: 17)),
       ],
     );
   }

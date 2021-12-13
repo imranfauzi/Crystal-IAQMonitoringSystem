@@ -8,20 +8,19 @@ import 'package:crystal/controller/firebaseReferences.dart';
 import 'package:crystal/model/notificationAPI.dart';
 import 'package:crystal/model/sensor_data.dart';
 import 'package:crystal/view/Statistic.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:workmanager/workmanager.dart';
 
 class Homepage extends StatefulWidget {
-  String payload;
 
   Homepage({this.payload});
-
+  final String payload;
   @override
   _HomepageState createState() => _HomepageState();
 }
@@ -58,8 +57,6 @@ class _HomepageState extends State<Homepage> {
 
   NotificationAPI notificationAPI = new NotificationAPI();
   SensorData sensorData = new SensorData();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   void toggleSwitch(bool value) {
     if (notiButt == false) {
@@ -107,17 +104,15 @@ class _HomepageState extends State<Homepage> {
               children: [
                 //Title
                 Padding(
-                  padding: EdgeInsets.only(top: 60,left: 20, right: 20),
+                  padding: EdgeInsets.only(top: h*0.05,left: 20, right: 20),
                   child: AnimatedTextKit(
-
                     isRepeatingAnimation: true,
                       repeatForever: true,
                       animatedTexts:[
                         FadeAnimatedText("C R Y S T A L\nIndoor Air Quality (IAQ) Monitoring System",
                             textAlign: TextAlign.center,
                             duration: Duration(seconds: 6),
-                            textStyle: TextStyle(fontSize: 25, color: Colors.purple, fontWeight: FontWeight.bold)),
-
+                            textStyle: TextStyle(fontSize: 25, color: Colors.purple,)),
                       ])
                 ),
                 // *********Top element**********
@@ -146,7 +141,7 @@ class _HomepageState extends State<Homepage> {
                         ),],)],),
                 // *********Bottom element****************
                 Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5, top: 550),
+                  padding: EdgeInsets.only(left: 5, right: 5, top: h*0.7),
                   child: ListView(
                     children: [
                       //Air Quality Index
@@ -187,7 +182,7 @@ class _HomepageState extends State<Homepage> {
                                 color: Colors.greenAccent,
                                 elevation: 6,
                                 child: ListTile(
-                                  onTap: () {Get.to(StatisticPage());},
+                                  onTap: () {Get.to(StatisticPage(), transition: Transition.rightToLeftWithFade);},
                                   trailing: Text("IAQ ( Date: "+listsAQI[listsAQI.length-1]["date"]+ " )"),
                                   leading: Icon(Icons.nature_rounded),
                                   title: Text( (double.tryParse(listsAQI[listsAQI.length - 1]["value"].substring(0, 3)) == null)?
@@ -279,7 +274,7 @@ class _HomepageState extends State<Homepage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 150,),
+                    SizedBox(height: h*0.19,),
                     Container(
                       height: h / 2,
                       child: ListView(
@@ -297,56 +292,62 @@ class _HomepageState extends State<Homepage> {
                                       height: h / 3,
                                       width: w / 3,
                                       colorBlendMode: BlendMode.lighten),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                   children: [
-                                     //IAQ status
-                                     StreamBuilder(
-                                      stream: ref.dbRefAQI.onValue,
-                                      builder: (context, AsyncSnapshot<Event> snapshot) {
-                                        if (snapshot.hasData) {
-                                          listsAQI.clear();
-                                          DataSnapshot dataValues = snapshot.data.snapshot;
-                                          Map<dynamic, dynamic> values = dataValues.value;
-                                          values.forEach((key, values) {
-                                            if(values["value"]!="nan"){
-                                              listsAQI.add(values);
-                                            }});
+                                  Expanded(
+                                    child: ListView(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                         children: [
+                                           //IAQ status
+                                           StreamBuilder(
+                                            stream: ref.dbRefAQI.onValue,
+                                            builder: (context, AsyncSnapshot<Event> snapshot) {
+                                              if (snapshot.hasData) {
+                                                listsAQI.clear();
+                                                DataSnapshot dataValues = snapshot.data.snapshot;
+                                                Map<dynamic, dynamic> values = dataValues.value;
+                                                values.forEach((key, values) {
+                                                  if(values["value"]!="nan"){
+                                                    listsAQI.add(values);
+                                                  }});
 
-                                          if (listsAQI.length>0) {
-                                            for(int a = 0; listsAQI.length<70; a++) {
-                                              listsPPM.add(double.tryParse(listsAQI[a]["value"]));
-                                            }
-                                            sensorData.ppm = double.parse(
-                                                (listsAQI[listsAQI.length - 1]["value"])
-                                                    .substring(0, 3));
-                                            iaq = sensorData.ppm;
-                                          }
-                                          return Expanded(child: IAQStatusText(sensorData: sensorData),);
-                                        }
-                                        return CircularProgressIndicator();
-                                      }),
-                                     //Temp status
-                                     StreamBuilder(
-                                         stream: ref.dbRefTemperature.onValue,
-                                         builder: (context, AsyncSnapshot<Event> snapshot) {
-                                           if (snapshot.hasData) {
-                                             listsTemperature.clear();
-                                             DataSnapshot dataValues = snapshot.data.snapshot;
-                                             Map<dynamic, dynamic> values = dataValues.value;
-                                             values.forEach((key, values) {
-                                               if(values!="nan"){
-                                                 listsTemperature.add(values);
-                                               }});
-                                             sensorData.temperature = double.parse(listsTemperature
-                                             [listsTemperature.length-1].substring(0,2));
-                                             temp = sensorData.temperature;
-                                             print("Temperature: $temp");
-                                             return Expanded(child: new TempStatusText(temp: temp));
-                                           }
-                                           return CircularProgressIndicator();
-                                         }),
-                                   ],
+                                                if (listsAQI.length>0) {
+                                                  for(int a = 0; listsAQI.length<70; a++) {
+                                                    listsPPM.add(double.tryParse(listsAQI[a]["value"]));
+                                                  }
+                                                  sensorData.ppm = double.parse(
+                                                      (listsAQI[listsAQI.length - 1]["value"])
+                                                          .substring(0, 3));
+                                                  iaq = sensorData.ppm;
+                                                }
+                                                return Expanded(child: IAQStatusText(sensorData: sensorData),);
+                                              }
+                                              return CircularProgressIndicator();
+                                            }),
+                                           //Temp status
+                                           StreamBuilder(
+                                               stream: ref.dbRefTemperature.onValue,
+                                               builder: (context, AsyncSnapshot<Event> snapshot) {
+                                                 if (snapshot.hasData) {
+                                                   listsTemperature.clear();
+                                                   DataSnapshot dataValues = snapshot.data.snapshot;
+                                                   Map<dynamic, dynamic> values = dataValues.value;
+                                                   values.forEach((key, values) {
+                                                     if(values!="nan"){
+                                                       listsTemperature.add(values);
+                                                     }});
+                                                   sensorData.temperature = double.parse(listsTemperature
+                                                   [listsTemperature.length-1].substring(0,2));
+                                                   temp = sensorData.temperature;
+                                                   print("Temperature: $temp");
+                                                   return Expanded(child: new TempStatusText(temp: temp));
+                                                 }
+                                                 return CircularProgressIndicator();
+                                               }),
+                                         ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

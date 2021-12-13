@@ -17,6 +17,9 @@ class Crystal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+        theme: ThemeData(
+          fontFamily: "Muli",
+        ) ,
         debugShowCheckedModeBanner: false,
         home: AuthWrapper(),
         initialBinding: AuthBinding(),
