@@ -11,7 +11,6 @@ class NotificationAPI {
 
   static callbackDispatcher() {
     Workmanager().executeTask((task, inputData) {
-
       if(SensorData().ppm > 315){
         var android = new AndroidInitializationSettings('app_icon');
         // initialise settings for both Android and iOS device.
@@ -25,7 +24,6 @@ class NotificationAPI {
       } return Future.value(true);
     });
   }
-
   static Future _notificationDetails() async {
     return NotificationDetails(
       android: AndroidNotificationDetails(

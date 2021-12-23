@@ -1,7 +1,6 @@
 
 
 class SensorData {
-
   double _ppm;
   double _temperature;
 
@@ -16,3 +15,6 @@ class SensorData {
     _temperature = value;
   }
 }
+
+
+

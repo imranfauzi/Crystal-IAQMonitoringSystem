@@ -28,13 +28,10 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
 
   List<double> data1 = [4.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ];
-
-
   List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a),
   ];
-
 
   FirebaseReference ref = new FirebaseReference();
 
@@ -93,9 +90,6 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
-    // Text('CRYSTAL: Indoor Air Quality (IAQ)\nMonitoring System',
-    //   textAlign: TextAlign.center,style: TextStyle(fontSize: 25,
-    //       color: Colors.blueGrey),),
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -185,8 +179,10 @@ class _HomepageState extends State<Homepage> {
                                   onTap: () {Get.to(StatisticPage(), transition: Transition.rightToLeftWithFade);},
                                   trailing: Text("IAQ ( Date: "+listsAQI[listsAQI.length-1]["date"]+ " )"),
                                   leading: Icon(Icons.nature_rounded),
-                                  title: Text( (double.tryParse(listsAQI[listsAQI.length - 1]["value"].substring(0, 3)) == null)?
-                                      "loading..." : double.tryParse(listsAQI[listsAQI.length - 1]["value"].substring(0, 5)).toString()+ " ppm"),
+                                  title: Text( (double.tryParse(listsAQI[listsAQI.length - 1]["value"]
+                                      .substring(0, 3)) == null)?
+                                      "loading..." : double.tryParse(listsAQI[listsAQI.length - 1]["value"]
+                                      .substring(0, 5)).toString()+ " ppm"),
                                 ),
                               );
                             }

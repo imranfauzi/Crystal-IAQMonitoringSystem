@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class BuildDropDownButton extends StatefulWidget {
   BuildDropDownButton({
     this.dropDownValue,
@@ -37,8 +36,6 @@ class _BuildDropDownButtonState extends State<BuildDropDownButton> {
           child: Text(value),
         );
       }).toList(),
-
-
     );
   }
 }

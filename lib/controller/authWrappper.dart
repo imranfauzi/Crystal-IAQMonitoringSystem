@@ -10,7 +10,11 @@ class AuthWrapper extends GetWidget<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return (Get.find<AuthController>().user != null) ? Homepage() : LoginPage();
+      try{
+        return (Get.find<AuthController>().user != null) ? Homepage() : LoginPage();
+      } catch(e){
+        return CircularProgressIndicator();
+      }
     });
   }
 }

@@ -40,7 +40,6 @@ class AuthController extends GetxController {
       } else if (e.code == 'wrong-password') {
         Get.snackbar("Wrong password provided for that user.", e.message, snackPosition: SnackPosition.BOTTOM);
       }
-
     }
   }
 
@@ -48,6 +47,5 @@ class AuthController extends GetxController {
     print("Logout");
     await _auth.signOut();
   }
-
-  }
+}
 

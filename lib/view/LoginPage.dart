@@ -39,6 +39,7 @@ class LoginPage extends GetWidget<AuthController> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32))),
     );
   }
+
   Widget _passwordField() {
     return Obx(() => TextFormField(
       validator: (String value) {
@@ -96,6 +97,10 @@ class LoginPage extends GetWidget<AuthController> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Invalid email or password")),
                               );}_formKey.currentState.save();
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+                          if(!currentFocus.hasPrimaryFocus) {
+                            currentFocus.unfocus();
+                          }
                           controller.SignIn(email: _email, password: _password);
                         },
                         child: Text("Login", textAlign: TextAlign.center,
@@ -115,6 +120,10 @@ class LoginPage extends GetWidget<AuthController> {
                             child: GestureDetector(
                                 child: Text('New User? Create Account'),
                                 onTap: () {
+                                  FocusScopeNode currentFocus = FocusScope.of(context);
+                                  if(!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
                                   Get.to(RegisterPage());
                                 }
                             ))

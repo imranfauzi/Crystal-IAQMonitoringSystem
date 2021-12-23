@@ -5,28 +5,18 @@ import 'package:flutter/material.dart';
 class IAQStatusText extends StatefulWidget {
   const IAQStatusText({
     Key key,
-
     @required this.sensorData,
   }) : super(key: key);
-
-
   final SensorData sensorData;
-
   @override
   State<IAQStatusText> createState() => _IAQStatusTextState();
 }
-
 class _IAQStatusTextState extends State<IAQStatusText> {
-
-
-  var iaqStatus = [
-    "Good Air Quality",
-    "Moderate Air Quality",
+  var iaqStatus = [ "Good Air Quality", "Moderate Air Quality",
     "Unhealthy Air Quality",
     "Very Unhealthy Air Quality",
     "Hazardous Air Quality"
   ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,8 +32,11 @@ class _IAQStatusTextState extends State<IAQStatusText> {
               ),
               borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
-            child: IAQStatus(iaqStatus: iaqStatus, value: (widget.sensorData.ppm!=null) ? widget.sensorData.ppm: 1000, size: 17)),
+            child: IAQStatus(iaqStatus: iaqStatus, value: (widget.sensorData.ppm!=null) ?
+            widget.sensorData.ppm: 1000, size: 17)),
       ],
     );
   }
 }
+
+

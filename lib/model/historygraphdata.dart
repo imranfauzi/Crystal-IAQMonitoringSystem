@@ -1,5 +1,8 @@
-class SalesData {
-  SalesData(this.year, this.sales);
+class HistoryData {
+  HistoryData(this.year, this.values);
   final String year;
-  final double sales;
+  final double values;
 }
+
+
+

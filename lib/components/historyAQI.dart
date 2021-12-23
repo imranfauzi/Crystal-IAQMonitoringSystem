@@ -1,10 +1,7 @@
 import 'package:crystal/model/historygraphdata.dart';
-import 'package:draw_graph/draw_graph.dart';
-import 'package:draw_graph/models/feature.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
-
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
@@ -101,7 +98,8 @@ class _HistoryAQIState extends State<HistoryAQI> {
                 if (listsAQI1.length > 0) {
                   /*For sorting all values based on date*/
                   for (final item in listsAQI1) {
-                    if (DateTime.tryParse(item["date"]) != null && double.tryParse(item["value"])<1001) {
+                    if (DateTime.tryParse(item["date"]) != null && double.
+                    tryParse(item["value"])<1001) {
                       sortingByDay(item, 1, average_1);
                       sortingByDay(item, 2, average_2);
                       sortingByDay(item, 3, average_3);
@@ -143,23 +141,23 @@ class _HistoryAQIState extends State<HistoryAQI> {
                       //plotAreaBackgroundColor: Colors.white,
                       backgroundColor: Color(0xFF2E294E),
                       tooltipBehavior: _tooltipBehavior,
-                      series: <LineSeries<SalesData, String>>[
-                        LineSeries<SalesData, String>(
+                      series: <LineSeries<HistoryData, String>>[
+                        LineSeries<HistoryData, String>(
                             color: Colors.amber,
                             name: "PPM average",
                             xAxisName: "day",
                             yAxisName: "value",
-                            dataSource: <SalesData>[
-                                SalesData(strDate(7), listsPPM1[0]),
-                                SalesData(strDate(6), listsPPM1[1]),
-                                SalesData(strDate(5), listsPPM1[2]),
-                                SalesData(strDate(4), listsPPM1[3]),
-                                SalesData(strDate(3), listsPPM1[4]),
-                                SalesData(strDate(2), listsPPM1[5]),
-                                SalesData(strDate(1), listsPPM1[6])
+                            dataSource: <HistoryData>[
+                                HistoryData(strDate(7), listsPPM1[0]),
+                                HistoryData(strDate(6), listsPPM1[1]),
+                                HistoryData(strDate(5), listsPPM1[2]),
+                                HistoryData(strDate(4), listsPPM1[3]),
+                                HistoryData(strDate(3), listsPPM1[4]),
+                                HistoryData(strDate(2), listsPPM1[5]),
+                                HistoryData(strDate(1), listsPPM1[6])
                             ],
-                            xValueMapper: (SalesData sales, _) => sales.year,
-                            yValueMapper: (SalesData sales, _) => sales.sales,
+                            xValueMapper: (HistoryData sales, _) => sales.year,
+                            yValueMapper: (HistoryData sales, _) => sales.values,
                             // Enable data label
                             dataLabelSettings:
                                 DataLabelSettings(isVisible: true))
@@ -179,4 +177,4 @@ class _HistoryAQIState extends State<HistoryAQI> {
   }
 }
 
-//
+

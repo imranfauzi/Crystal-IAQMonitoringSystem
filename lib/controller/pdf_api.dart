@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-
 class PdfApi {
 
   List months =  ["Jan", "Feb", "Mar", "Apr",
@@ -37,7 +36,6 @@ class PdfApi {
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
-
   Future<File> generatePDF({Stat stat}) async {
     final document = PdfDocument();
     final page = document.pages.add();
@@ -50,13 +48,12 @@ class PdfApi {
 
     return saveFile(document);
   }
-
   //draw stat table
   void drawGrid(Stat stat,PdfPage page){
     final grid = PdfGrid();
     grid.columns.add(count: 3);
     final headerRow = grid.headers.add(1)[0];
-    headerRow.cells[0].value = "Months (${stat.currentYear})";
+    headerRow.cells[0].value = "Month";
     headerRow.cells[1].value = "PPM Average";
     headerRow.cells[2].value = "Status";
     headerRow.style.font = PdfStandardFont(PdfFontFamily.helvetica, 12, style: PdfFontStyle.bold);
@@ -89,7 +86,6 @@ class PdfApi {
             PdfPaddings(bottom: 5, left: 5, top: 5, right: 5);
       }
     }
-
     grid.draw(
       page:  page,
       bounds: Rect.fromLTWH(0, 110, 0, 0)
@@ -107,7 +103,6 @@ class PdfApi {
 Source: CRYSTAL (Indoor Air Quality Monitoring System)''';
     final info = '''Info:
 Table below shows Indoor Air Quality (AQI) category''';
-
 
     page.graphics.drawString(
         title,
@@ -144,8 +139,6 @@ Table below shows Indoor Air Quality (AQI) category''';
     );
   }
 
-
-
   //save pdf document
   Future<File> saveFile(PdfDocument document) async {
 
@@ -156,14 +149,9 @@ Table below shows Indoor Air Quality (AQI) category''';
       final file = File(fileName);
       file.writeAsBytes(document.save(), flush: true);
       document.dispose();
-
       return file;
-
     } catch(e){
       print(e);
     }
-
   }
-
-
 }

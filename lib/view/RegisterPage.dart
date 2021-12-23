@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:crystal/controller/authController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +41,6 @@ class RegisterPage extends GetWidget<AuthController> {
    _isPswdSpecialChar.value = false;
    if(specialReg.hasMatch(password))
      _isPswdSpecialChar.value = true;
-
  }
 
   void _togglePasswordView(){
@@ -236,8 +234,7 @@ class RegisterPage extends GetWidget<AuthController> {
                       ],
                     ), //Validation
                     SizedBox(height: h/60,),
-                    Material(
-                      borderRadius: BorderRadius.circular(30),
+                    Material(borderRadius: BorderRadius.circular(30),
                       color: Colors.orangeAccent,
                       child: MaterialButton(
                         minWidth: w,
@@ -266,9 +263,7 @@ class RegisterPage extends GetWidget<AuthController> {
                         Center(
                             child: GestureDetector(
                                 child: Text('Already have an account? Login'),
-                                onTap: () {
-                                  Get.back();
-                                }
+                                onTap: () {Get.back();}
                             )
                         )
                       ],

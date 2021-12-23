@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
-
 class StatisticPage extends StatefulWidget {
   @override
   State<StatisticPage> createState() => _StatisticPageState();
@@ -18,8 +17,6 @@ class _StatisticPageState extends State<StatisticPage> {
   List month = ["Jan", "Feb", "Mar", "Apr",
     "May", "Jun", "July", "Aug", "Sept", "Oct",
     "Nov", "Dec", "Average"];
-
-
   List<Map<dynamic, dynamic>> listsAQI = [];
 
   DateTime time = DateTime.now().toLocal();
@@ -37,8 +34,6 @@ class _StatisticPageState extends State<StatisticPage> {
   bool isTap=false;
   List<String> yearList = [DateTime.now().year.toString()];
 
-
-
   //status
   var iaqStatus = [
     "Good Air Quality",
@@ -47,7 +42,6 @@ class _StatisticPageState extends State<StatisticPage> {
     "Very Unhealthy Air Quality",
     "Hazardous Air Quality"
   ];
-
   //Status Icon
   Widget status(double data, IconData icon, Function pressed) {
     if(data==0)
@@ -64,7 +58,6 @@ class _StatisticPageState extends State<StatisticPage> {
     if(data>301)
       return IconButton(onPressed: pressed, icon: Icon(icon, color: Colors.red,));
   }
-
   //Status list
   statusList(List data, List result) {
     for (int i = 0; i < 13; i++) {
@@ -150,13 +143,9 @@ class _StatisticPageState extends State<StatisticPage> {
         context: context,
         builder: (context) => Center(child: CircularProgressIndicator())
     );
-
   final file = await PdfApi().generatePDF(stat: stat);
-  print(file.path);
-
   Navigator.of(context).pop();
   await OpenFile.open(file.path);
-
 }
 
 @override
@@ -165,7 +154,6 @@ class _StatisticPageState extends State<StatisticPage> {
     super.initState();
     count = 0;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -181,8 +169,6 @@ class _StatisticPageState extends State<StatisticPage> {
     stat.currentYear = dropDownValue;
     stat.avgYear = totalYear;
 
-
-
     var h = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -191,8 +177,6 @@ class _StatisticPageState extends State<StatisticPage> {
         backgroundColor: Colors.orangeAccent,
         actions: [
           IconButton(
-              // onPressed: () {Get.to(InformationPage(), transition: Transition.rightToLeftWithFade);},
-              // icon: Icon(Icons.info_outlined)
             onPressed: () async {onSubmit();},
             icon: Icon(Icons.save),
           )
@@ -210,8 +194,7 @@ class _StatisticPageState extends State<StatisticPage> {
                       count=0;
                       totalYear=0;
                       for(int i = 0; i<12; i++){
-                        listAverage[i].clear();
-                      }
+                        listAverage[i].clear();}
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
                       values.forEach((key, values) {
@@ -219,7 +202,6 @@ class _StatisticPageState extends State<StatisticPage> {
                           listsAQI.add(values);
                         }});
                       if(listsAQI.length>0){
-                        print("length: ${listsAQI.length}");
                         for(final item in listsAQI){
                             if(DateTime.tryParse(item["date"])!=null && double.tryParse(item["value"])<1000 &&
                                 DateTime.tryParse(item["date"]).year!=1970){
@@ -250,8 +232,6 @@ class _StatisticPageState extends State<StatisticPage> {
                         }
                         resultAverage[12] = double.tryParse((totalYear/count).toStringAsFixed(2));
                         statusList(resultAverage, resultStatus);
-                        print("count: $count");
-
                       }
                       return Expanded(
                         child: Column(
@@ -325,7 +305,6 @@ class _StatisticPageState extends State<StatisticPage> {
                       setState(() {
                         dropDownValue = newValue;
                       });
-
                     },
                     items: yearList.toSet().toList()
                         .map<DropdownMenuItem<String>>((String value) {
@@ -343,10 +322,6 @@ class _StatisticPageState extends State<StatisticPage> {
       ),
     );
   }
-
-  // DropdownButton<String> buildDropdownButton() {
-  //   return
-  // }
 }
 
 

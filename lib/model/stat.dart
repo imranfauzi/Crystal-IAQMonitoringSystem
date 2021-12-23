@@ -7,13 +7,10 @@ class Stat {
   double _avgYear;
   String _currentYear;
 
-
-
   List<double> get avgPPM => _avgPPM;
   List<String> get avgStatus => _avgStatus;
   double get avgYear => _avgYear;
   String get currentYear => _currentYear;
-
 
   set avgPPM(List<double> value) {
     _avgPPM = value;
@@ -30,9 +27,6 @@ class Stat {
   set currentYear(String value) {
     _currentYear = value;
   }
-
-// Stat({this.avgPPM, this.avgYear, this.currentYear});
-
-
-
 }
+
+
