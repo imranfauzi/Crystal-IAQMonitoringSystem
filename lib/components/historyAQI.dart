@@ -119,35 +119,36 @@ class _HistoryAQIState extends State<HistoryAQI> {
                     calculateAverage(average_1, resultaverage_1)
                   ]);
                 }
-                return Stack(children: [
-                  Container(
-                    child: Text("PPM",
-                        style: TextStyle(color: Colors.yellow, fontSize: 15)),
-                    alignment: Alignment.topLeft,
-                  ),
-                  SfChartTheme(
-                    data: SfChartThemeData(
-                        brightness: Brightness.dark,
-                        axisLineColor: Colors.white,
-                        majorGridLineColor: Colors.white30,
-                        backgroundColor: Color(0xFF2E294E)),
-                    child: SfCartesianChart(
-                      primaryXAxis: CategoryAxis(isVisible: true),
-                      title: ChartTitle(
-                          text: "Week IAQ History",
-                          textStyle: TextStyle(color: Colors.yellow,)),
-                      legend: Legend(
+                try{
+                  return Stack(children: [
+                    Container(
+                      child: Text("PPM",
+                          style: TextStyle(color: Colors.yellow, fontSize: 15)),
+                      alignment: Alignment.topLeft,
+                    ),
+                    SfChartTheme(
+                      data: SfChartThemeData(
+                          brightness: Brightness.dark,
+                          axisLineColor: Colors.white,
+                          majorGridLineColor: Colors.white30,
+                          backgroundColor: Color(0xFF2E294E)),
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(isVisible: true),
+                        title: ChartTitle(
+                            text: "Week IAQ History",
+                            textStyle: TextStyle(color: Colors.yellow,)),
+                        legend: Legend(
                           isVisible: true,),
-                      //plotAreaBackgroundColor: Colors.white,
-                      backgroundColor: Color(0xFF2E294E),
-                      tooltipBehavior: _tooltipBehavior,
-                      series: <LineSeries<HistoryData, String>>[
-                        LineSeries<HistoryData, String>(
-                            color: Colors.amber,
-                            name: "PPM average",
-                            xAxisName: "day",
-                            yAxisName: "value",
-                            dataSource: <HistoryData>[
+                        //plotAreaBackgroundColor: Colors.white,
+                        backgroundColor: Color(0xFF2E294E),
+                        tooltipBehavior: _tooltipBehavior,
+                        series: <LineSeries<HistoryData, String>>[
+                          LineSeries<HistoryData, String>(
+                              color: Colors.amber,
+                              name: "PPM average",
+                              xAxisName: "day",
+                              yAxisName: "value",
+                              dataSource: <HistoryData>[
                                 HistoryData(strDate(7), listsPPM1[0]),
                                 HistoryData(strDate(6), listsPPM1[1]),
                                 HistoryData(strDate(5), listsPPM1[2]),
@@ -155,16 +156,20 @@ class _HistoryAQIState extends State<HistoryAQI> {
                                 HistoryData(strDate(3), listsPPM1[4]),
                                 HistoryData(strDate(2), listsPPM1[5]),
                                 HistoryData(strDate(1), listsPPM1[6])
-                            ],
-                            xValueMapper: (HistoryData sales, _) => sales.year,
-                            yValueMapper: (HistoryData sales, _) => sales.values,
-                            // Enable data label
-                            dataLabelSettings:
-                                DataLabelSettings(isVisible: true))
-                      ],
-                    ),
-                  )
-                ]);
+                              ],
+                              xValueMapper: (HistoryData sales, _) => sales.year,
+                              yValueMapper: (HistoryData sales, _) => sales.values,
+                              // Enable data label
+                              dataLabelSettings:
+                              DataLabelSettings(isVisible: true))
+                        ],
+                      ),
+                    )
+                  ]);
+                } catch(e) {
+                  return CircularProgressIndicator();
+                }
+
               }
               return CircularProgressIndicator();
             }),

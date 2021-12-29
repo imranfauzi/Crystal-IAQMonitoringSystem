@@ -102,9 +102,13 @@ class _RealtimeAQIState extends State<RealtimeAQI> {
                 listsPPM2 = listsAQI2.sublist(listsAQI2.length-70, listsAQI2.length-1);
                 sensorData.ppm = double.parse((listsAQI2[listsAQI2.length-1]).toString().substring(0, 2));
               }
-              return AQI_Chart("Indoor Air Quality",
-                  double.tryParse(listsAQI2[listsAQI2.length-1].toString().substring(0, 5)).toString() + " ppm",
-                  "updated every 3 seconds", listsPPM2);
+              try{
+                return AQI_Chart("Indoor Air Quality",
+                    double.tryParse(listsAQI2[listsAQI2.length-1].toString().substring(0, 5)).toString() + " ppm",
+                    "updated every 3 seconds", listsPPM2);
+              } catch(e){
+                return CircularProgressIndicator();
+              }
             } return CircularProgressIndicator();
           }),
       decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(20))), width: widget.w / 1.04,

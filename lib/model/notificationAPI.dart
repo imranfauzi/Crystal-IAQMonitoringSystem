@@ -19,7 +19,7 @@ class NotificationAPI {
         showNotification();
         return NotificationAPI.showNotification(
             title: "BAD Air Quality!!",
-            body: "Low air quality index detected,\nplease improve the space airflow.",
+            body: "Low air quality index detected,\nplease improve the airflow.",
             payload: "payload");
       } return Future.value(true);
     });
@@ -38,7 +38,7 @@ class NotificationAPI {
     );
   }
 
-// Direct to payload after click on the notification
+//Direct to payload after click on the notification
   static Future init({bool initScheduled = false}) async {
     final android = AndroidInitializationSettings("app_icon");
     final settings = InitializationSettings(android: android);

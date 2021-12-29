@@ -74,10 +74,10 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    NotificationAPI.init();
-    listenNotification();
-    Workmanager()
-        .initialize(NotificationAPI.callbackDispatcher, isInDebugMode: true);
+    // NotificationAPI.init();
+    // listenNotification();
+    // Workmanager()
+    //     .initialize(NotificationAPI.callbackDispatcher, isInDebugMode: true);
   }
 
   void listenNotification() =>
@@ -165,7 +165,7 @@ class _HomepageState extends State<Homepage> {
                                   NotificationAPI.showNotification(
                                       title: "BAD Air Quality!!",
                                       body:
-                                      "High air quality index detected,\nplease improve the space airflow.",
+                                      "High air quality index detected,\nplease improve the airflow.",
                                       payload: "payload");
                                   noti = false;
                                   //limit a notification per minute
